@@ -1,0 +1,74 @@
+<html>
+<body>
+	<canvas id="myCanvas" width="2000" height="2000"></canvas>
+	<script>
+
+	var myWorker = new Worker("worker.js");
+
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+      myWorker.onmessage = function (oEvent) {
+	  	c(oEvent.data.x,oEvent.data.y)
+	  	console.log(oEvent.data.x+" "+oEvent.data.y)
+	  };
+
+      var dir=0;
+
+      var x=1000; var y=1000;
+
+      var cc=0;
+      var ci=0;
+
+      var gap=1;
+
+      for(var i=0; i<2000; i++){
+      	dir++; if(dir>3) dir=0;
+      	for(var ccc=0; ccc<cc; ccc++){
+		      	if(dir===0) {x+=gap;}
+		      	if(dir===1) {y+=gap;}
+		      	if(dir===2) {x-=gap;}
+		      	if(dir===3) {y-=gap;}
+		      	if (isPrime(ci)) c(x,y);
+		      	myWorker.postMessage({num:ci,x:x,y:y});
+		      	ci++;
+		      	//console.log(`${dir} ${x} ${y}\t${cc}`)
+	    }
+	      cc++;
+      }
+
+	function isPrime(n) {
+
+    if (n === 1 || n===2) {
+        return false;
+    }
+
+    if (n % 2 === 0) {
+        return false;
+    }
+    var i, l;
+    // Checking for divisors
+    for (i = 3, l = Math.sqrt(n); i <= l; i += 2) {
+        if (n % i === 0) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+  function c(x,y){
+      context.beginPath();
+      context.arc(x, y, 1, 0, 2 * Math.PI, false);
+      context.fillStyle = 'red';
+      context.fill();
+      // context.lineWidth = 1;
+      // context.strokeStyle = '#003300';
+      // context.stroke();
+  }
+
+
+
+  </script>
+</body>
+</html>
